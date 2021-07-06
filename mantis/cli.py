@@ -1,6 +1,6 @@
 import typer
 
-from mantis.predict import predict_prodigy as predict_prodigy
+from mantis.predict import predict_prodigy
 
 app = typer.Typer()
 

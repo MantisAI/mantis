@@ -1,11 +1,9 @@
+import os
 import json
 import spacy
 import typer
-from wasabi import MarkdownRenderer
 
 from .utils import create_prodigy_spans
-
-from nervaluate.nervaluate import Evaluator
 
 
 def predict_prodigy(
@@ -13,48 +11,26 @@ def predict_prodigy(
         data_path: str = typer.Argument(
             help="Path to data in prodigy format (including the raw text)",
             default=""
-        ),
-        tags: str = typer.Argument(
-            None, help="Comma separated list of tags to include in the evaluation"
-        ),
-        by_tag: bool = typer.Option(
-            None,
-            help="If set, will return tag level results instead of aggregated results.",
-        ),
-        pretty: bool = typer.Option(
-            None,
-            help="If set, will print the results in a pretty format instead of returning the raw json",
         )
 ):
     spacy_model = spacy.load(model_path)
 
-    true = []
     pred = []
 
     with open(data_path) as f:
         for line in f:
             pattern = json.loads(line)
             text = pattern["text"]
-            meta = pattern["meta"]
-            true.append(meta)
             doc = spacy_model(text)
-            pred.append(create_prodigy_spans(doc))
+            pred.append({"text": text, "meta": create_prodigy_spans(doc)})
 
-    tags_list = tags.split(",")
-    evaluator = Evaluator(true=true, pred=pred, tags=tags_list, loader=None)
+    head, tail = os.path.split(data_path)
 
-    results, results_by_tag = evaluator.evaluate()
+    filename, extension = os.path.splitext(tail)
+    pred_path = os.path.join(head, filename + "_pred" + extension)
 
-    if by_tag:
-        output = results_by_tag
-    else:
-        output = results
-
-    if pretty:
-        md = MarkdownRenderer()
-        md.add(md.code_block(output))
-        typer.echo(md.text)
-        return md.text
-    else:
-        typer.echo(output)
-        return output
+    with open(pred_path, "w") as f:
+        for prediction in pred:
+            f.write(json.dumps(prediction))
+            f.write('\n')
+    return
