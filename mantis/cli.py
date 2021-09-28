@@ -3,8 +3,7 @@ import sys
 import pandas as pd
 
 from mantis.predict import predict_prodigy
-from mantis.similar_data import get_similar_data, MantisGutenbergMiniLM, SentenceTransformerEncoder, construct_embedding_data
-from mantis.similar_data.models import UniversalSentenceEncoder
+from mantis.similar import get_similar_data, MantisGutenbergMiniLM, SentenceTransformerEncoder, construct_embedding_data, UniversalSentenceEncoder
 
 app = typer.Typer()
 
@@ -15,7 +14,7 @@ app.add_typer(predict_app, name="predict")
 
 @app.command()
 def make_embedding_data(
-    txt_file,
+    txt_file: str,
     out_dir: str = "./",
     character_length_threshold: int = 0.7,
     model_encoder_class_name: str = "SentenceTransformerEncoder"
