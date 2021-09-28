@@ -1,3 +1,7 @@
 pytest
 typer
 spacy
+transformers
+sentence-transformers
+tensorflow-hub
+pandas
