@@ -20,7 +20,7 @@ class UniversalSentenceEncoder:
         self.model = hub.load("https://tfhub.dev/google/universal-sentence-encoder/4")
 
     def get_embeddings(self, data):
-        return self.model(data)
+        return self.model(data).numpy()
 
 
 def MantisGutenbergMiniLM():
