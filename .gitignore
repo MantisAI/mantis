@@ -1,4 +1,4 @@
 **__pycache__/
-mantis.egg-info/
-build/
 dist/
+*.egg-info/
+build/
